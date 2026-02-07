@@ -21,9 +21,14 @@ jobs:
   polaris:
     runs-on: ubuntu-latest
     steps:
-      - name: Checkout Source
+      - name: Checkout Source & Setup JDK
         uses: actions/checkout@v4
-
+        with:
+          java-version: '11'
+          distribution: 'adopt'
+          cache: maven
+      - name: Build with Maven Wrapper
+        run: ./mvnw -B package
       - name: Polaris Security Scan
         id: polaris-scan
         uses: blackduck-inc/black-duck-security-scan@v2
@@ -35,8 +40,6 @@ jobs:
           polaris_assessment_types: SAST,SCA  # Comma-separated list: SAST,SCA,DAST
           ### Mark build status if policy violating issues are found
           mark_build_status: success  # Set to success, failure, or skip
-
-
           ### SCAN CONFIGURATION: Uncomment below to enable
           # polaris_waitForScan: true # Wait for scan completion before proceeding
 
